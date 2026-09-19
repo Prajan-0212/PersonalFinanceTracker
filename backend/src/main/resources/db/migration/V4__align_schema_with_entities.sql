@@ -1,0 +1,55 @@
+-- Users
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS full_name VARCHAR(100);
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS role VARCHAR(20);
+
+-- Categories
+ALTER TABLE categories
+    ADD COLUMN IF NOT EXISTS type VARCHAR(20);
+
+-- Expenses
+ALTER TABLE expenses
+    ADD COLUMN IF NOT EXISTS amount NUMERIC(12,2);
+
+ALTER TABLE expenses
+    ADD COLUMN IF NOT EXISTS transaction_date DATE;
+
+ALTER TABLE expenses
+    ADD COLUMN IF NOT EXISTS description VARCHAR(500);
+
+ALTER TABLE expenses
+    ADD COLUMN IF NOT EXISTS user_id BIGINT;
+
+ALTER TABLE expenses
+    ADD COLUMN IF NOT EXISTS category_id BIGINT;
+
+-- Incomes
+ALTER TABLE incomes
+    ADD COLUMN IF NOT EXISTS amount NUMERIC(12,2);
+
+ALTER TABLE incomes
+    ADD COLUMN IF NOT EXISTS transaction_date DATE;
+
+ALTER TABLE incomes
+    ADD COLUMN IF NOT EXISTS description VARCHAR(500);
+
+ALTER TABLE incomes
+    ADD COLUMN IF NOT EXISTS user_id BIGINT;
+
+ALTER TABLE incomes
+    ADD COLUMN IF NOT EXISTS category_id BIGINT;
+
+-- Budgets
+ALTER TABLE budgets
+    ADD COLUMN IF NOT EXISTS amount NUMERIC(12,2);
+
+ALTER TABLE budgets
+    ADD COLUMN IF NOT EXISTS month INTEGER;
+
+ALTER TABLE budgets
+    ADD COLUMN IF NOT EXISTS year INTEGER;
+
+ALTER TABLE budgets
+    ADD COLUMN IF NOT EXISTS user_id BIGINT;
