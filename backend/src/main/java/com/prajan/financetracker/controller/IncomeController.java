@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/income")
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class IncomeController {
 
     private final IncomeService incomeService;
