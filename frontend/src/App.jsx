@@ -365,22 +365,57 @@ function App() {
     setActivePage("Dashboard");
   }
 
+  // FinTrack is designed around monthly budget analysis.
+  // Dashboard totals therefore use only the current month's transactions.
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
+
+  const isInCurrentMonth = (transactionDate) => {
+    if (!transactionDate) {
+      return false;
+    }
+
+    const date = new Date(`${transactionDate}T00:00:00`);
+
+    return (
+        date.getFullYear() === currentYear &&
+        date.getMonth() === currentMonth
+    );
+  };
+
+  const currentMonthExpenses = useMemo(
+      () =>
+          expenses.filter((expense) =>
+              isInCurrentMonth(expense.transactionDate)
+          ),
+      [expenses, currentYear, currentMonth]
+  );
+
+  const currentMonthIncomes = useMemo(
+      () =>
+          incomes.filter((income) =>
+              isInCurrentMonth(income.transactionDate)
+          ),
+      [incomes, currentYear, currentMonth]
+  );
+
   const totalExpenses = useMemo(
       () =>
-          expenses.reduce(
+          currentMonthExpenses.reduce(
               (sum, item) => sum + Number(item.amount || 0),
               0
           ),
-      [expenses]
+      [currentMonthExpenses]
   );
 
   const totalIncome = useMemo(
       () =>
-          incomes.reduce(
+          currentMonthIncomes.reduce(
               (sum, item) => sum + Number(item.amount || 0),
               0
           ),
-      [incomes]
+      [currentMonthIncomes]
   );
 
   const balance = totalIncome - totalExpenses;
@@ -413,7 +448,7 @@ function App() {
   const categoryData = useMemo(() => {
     const grouped = {};
 
-    expenses.forEach((expense) => {
+    currentMonthExpenses.forEach((expense) => {
       const categoryName = getCategoryName(expense);
 
       grouped[categoryName] =
@@ -427,7 +462,7 @@ function App() {
           value
         })
     );
-  }, [expenses, categories]);
+  }, [currentMonthExpenses, categories]);
 
   const monthlyData = useMemo(() => {
     const result = [];
@@ -524,8 +559,6 @@ function App() {
         .slice(0, 10);
   }, [expenses, incomes, categories]);
 
-  const currentDate = new Date();
-
   const currentMonthName =
       currentDate.toLocaleString("en-US", {
         month: "long"
@@ -534,7 +567,6 @@ function App() {
   const currentMonthUpper =
       currentMonthName.toUpperCase();
 
-  const currentYear = currentDate.getFullYear();
 
   const navItems = [
     {
@@ -741,14 +773,14 @@ function App() {
                 <section className="stats-grid">
 
                   <StatCard
-                      title="Total Income"
+                      title="This Month's Income"
                       value={totalIncome}
                       icon={<ArrowUpRight />}
                       type="income"
                   />
 
                   <StatCard
-                      title="Total Expenses"
+                      title="This Month's Expenses"
                       value={totalExpenses}
                       icon={<ArrowDownRight />}
                       type="expense"
@@ -1217,63 +1249,63 @@ function App() {
 
                   </div>
 
-                                    <form onSubmit={saveBudget}>
+                  <form onSubmit={saveBudget}>
                     <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                        marginTop: "22px"
-                      }}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "10px",
+                          marginTop: "22px"
+                        }}
                     >
                       <label
-                        style={{
-                          fontSize: "15px",
-                          fontWeight: "600",
-                          color: "#172033"
-                        }}
+                          style={{
+                            fontSize: "15px",
+                            fontWeight: "600",
+                            color: "#172033"
+                          }}
                       >
                         Budget Amount
                       </label>
 
                       <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "14px",
-                          flexWrap: "wrap"
-                        }}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "14px",
+                            flexWrap: "wrap"
+                          }}
                       >
                         <input
-                          type="number"
-                          min="1"
-                          step="0.01"
-                          placeholder="Enter budget amount"
-                          value={budgetInput}
-                          onChange={(e) => setBudgetInput(e.target.value)}
-                          required
-                          style={{
-                            width: "260px",
-                            maxWidth: "100%",
-                            padding: "13px 15px",
-                            border: "1px solid #d9dee8",
-                            borderRadius: "10px",
-                            fontSize: "15px",
-                            color: "#172033",
-                            outline: "none",
-                            boxSizing: "border-box"
-                          }}
+                            type="number"
+                            min="1"
+                            step="0.01"
+                            placeholder="Enter budget amount"
+                            value={budgetInput}
+                            onChange={(e) => setBudgetInput(e.target.value)}
+                            required
+                            style={{
+                              width: "260px",
+                              maxWidth: "100%",
+                              padding: "13px 15px",
+                              border: "1px solid #d9dee8",
+                              borderRadius: "10px",
+                              fontSize: "15px",
+                              color: "#172033",
+                              outline: "none",
+                              boxSizing: "border-box"
+                            }}
                         />
 
                         <button
-                          className="primary-button"
-                          type="submit"
-                          style={{
-                            marginTop: "0",
-                            minHeight: "46px",
-                            padding: "0 22px",
-                            borderRadius: "10px"
-                          }}
+                            className="primary-button"
+                            type="submit"
+                            style={{
+                              marginTop: "0",
+                              minHeight: "46px",
+                              padding: "0 22px",
+                              borderRadius: "10px"
+                            }}
                         >
                           Save Budget
                         </button>
